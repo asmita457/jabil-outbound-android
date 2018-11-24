@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent"
+    tools:context=".AllBarcodeScan">
+
+
+     <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/DarkBlue">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jabil"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:paddingLeft="20dp"/>
+    </android.support.v7.widget.Toolbar>
+
+    <!--<ScrollView xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android">-->
+
+    <LinearLayout
+        android:id="@+id/linearpicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true">
+        <ImageView
+            android:id="@+id/piccgalary"
+            android:layout_width="30dp"
+            android:src="@drawable/camera"
+            android:layout_height="30dp"
+            />
+
+    </LinearLayout>
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:gravity="start"
+    android:layout_below="@+id/toolbar"
+    android:layout_height="match_parent">
+    <LinearLayout
+
+        android:id="@+id/linearSrNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/loginbutton"
+        android:layout_marginRight="40dp">
+
+        <TextView
+            android:id="@+id/txtsrnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SR Number  -"
+            android:paddingLeft="25dp"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/srNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="SR Number"
+            android:textColor="@color/black"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:textSize="18dp"
+            android:gravity="start"/>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/quantityScan"
+        android:orientation="horizontal"
+        android:background="@drawable/loginbutton"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="40dp"
+        android:visibility="visible"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_below="@+id/linearSrNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/linearTotalQuantity"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="visible"
+            android:layout_width="200dp"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Quantity"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/totalScanQuantity"
+                android:background="@drawable/loginbutton"
+                android:layout_width="match_parent"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginTop="3dp"
+                android:layout_height="40dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearScanQuantity"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="200dp"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scanned Quantity"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/ScanQuantity"
+                android:background="@drawable/loginbutton"
+                android:layout_width="match_parent"
+                android:layout_marginTop="3dp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_height="40dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:id="@+id/linearpart"
+        android:padding="10dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:background="@drawable/loginbutton"
+        android:layout_below="@+id/quantityScan"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Part No"
+            android:gravity="start"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="start"
+            android:textColor="@color/black" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            >
+            <TextView
+                android:layout_width="400dp"
+                android:id="@+id/partNo"
+                android:layout_height="wrap_content"
+                android:hint="Part No"
+                android:textSize="15dp"
+                android:padding="5dp"
+                android:layout_marginLeft="10dp"
+                android:editable="false"
+                android:textColorHint="@color/hintcolor"
+                android:paddingLeft="5dp"
+                android:textColor="@color/black"
+                android:cursorVisible="false"
+                android:background="@drawable/loginbutton"/>
+
+            <ImageView
+                android:id="@+id/partno_check"
+                android:layout_width="55dp"
+                android:layout_gravity="center"
+                android:layout_height="55dp"
+                android:layout_marginLeft="15dp"
+                android:visibility="invisible"
+                android:src="@drawable/check1"/>
+            <ImageView
+                android:id="@+id/partno_check_cross"
+                android:layout_width="55dp"
+                android:visibility="invisible"
+
+                android:layout_gravity="center"
+                android:layout_height="55dp"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/cross"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Po No"
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="10dp"
+           />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="400dp"
+                android:id="@+id/pono"
+                android:padding="5dp"
+                android:layout_height="wrap_content"
+                android:hint="Po No"
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp"
+                android:editable="false"
+                android:textColorHint="@color/hintcolor"
+                android:paddingLeft="5dp"
+                android:textColor="@color/black"
+                android:cursorVisible="false"
+                android:background="@drawable/loginbutton"/>
+            <ImageView
+                android:id="@+id/pono_chk"
+                android:layout_width="55dp"
+                android:visibility="invisible"
+
+                android:layout_height="55dp"
+                android:layout_marginLeft="15dp"
+                android:layout_gravity="center"
+                android:src="@drawable/check1"/>
+            <ImageView
+                android:id="@+id/pono_check_cross"
+                android:layout_width="55dp"
+                android:visibility="invisible"
+                android:layout_gravity="center"
+                android:layout_height="55dp"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/cross"/>
+        </LinearLayout>
+
+
+        <!--</RelativeLayout>-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Qty"
+            android:gravity="start"
+            android:layout_gravity="start"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="400dp"
+                android:id="@+id/qty"
+                android:padding="5dp"
+                android:layout_height="wrap_content"
+                android:hint="Qty"
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp"
+                android:editable="false"
+                android:textColorHint="@color/hintcolor"
+                android:paddingLeft="5dp"
+                android:textColor="@color/black"
+                android:cursorVisible="false"
+                android:background="@drawable/loginbutton"/>
+
+            <ImageView
+                android:id="@+id/qty_check"
+                android:layout_width="55dp"
+                android:visibility="invisible"
+
+                android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/check1" />
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Box No"
+            android:layout_gravity="start"
+            android:gravity="start"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="10dp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="400dp"
+                android:id="@+id/boxNo"
+                android:padding="5dp"
+                android:layout_height="wrap_content"
+                android:hint="Box No"
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp"
+                android:editable="false"
+                android:textColorHint="@color/hintcolor"
+                android:paddingLeft="5dp"
+                android:textColor="@color/black"
+                android:cursorVisible="false"
+                android:background="@drawable/loginbutton"/>
+            <ImageView
+                android:id="@+id/boxno_check"
+                android:layout_width="55dp"
+                android:visibility="invisible"
+
+                android:layout_height="55dp"
+                android:layout_marginLeft="15dp"
+                android:layout_gravity="center"
+                android:src="@drawable/check1"/>
+
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <!--</ScrollView>-->
+
+    <!--</RelativeLayout>-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/loginbutton"
+        android:layout_below="@+id/linearpart"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/submit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="SUBMIT"
+            android:background="@color/DarkBlue"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:textSize="20dp"/>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
+
+    <!--</ScrollView>-->
+</RelativeLayout>
