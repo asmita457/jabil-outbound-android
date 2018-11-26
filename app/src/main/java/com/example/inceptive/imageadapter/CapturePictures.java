@@ -59,7 +59,7 @@ import java.util.Map;
 
 
 public class CapturePictures extends AppCompatActivity {
-
+    public static final int CAMERA_REQUEST = 12;
     public static String IMAGE_UPLOAD="/api/SRFormsAPI/AddImage";
     ArrayList<ImageModel> list;
     public static final String IMAGE_DIRECTORY = "ImageScalling";
@@ -68,18 +68,15 @@ public class CapturePictures extends AppCompatActivity {
     private File destFile;
     public static final String IMAGE_EXTENSION = "jpg";
     private File file;
-    private static String imageStoragePath,picturePath;
-    Uri fileUri,uri;
+    private static String imageStoragePath;
+    Uri fileUri;
     Bitmap bmpCompressImage;
     ImageView img;
-    private Uri imageCaptureUri;
     private SimpleDateFormat dateFormatter;
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     private static int RESULT_LOAD_IMAGE = 1;
      String getIpUrlAllBarcode;
-    EditText edtName;
-    byte[] byteArray;
     public static SQLiteHelper sqLiteHelper;
     SharedPreferences.Editor editor;
     SharedPreferences pref;
@@ -97,7 +94,7 @@ public class CapturePictures extends AppCompatActivity {
         sqLiteHelper.queryData("CREATE TABLE IF NOT EXISTS BOXIMAGE(Id INTEGER PRIMARY KEY AUTOINCREMENT, image BLOB)");
 
         CaptureImage();
-        LoadImage();
+//        LoadImage();
 
     }
     public static byte[] imageViewToByte(ImageView image) {
@@ -107,36 +104,27 @@ public class CapturePictures extends AppCompatActivity {
         byte[] byteArray = stream.toByteArray();
         return byteArray;
     }
-
-    private void LoadImage() {
-        buttonLoadImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                    Intent intent=new Intent(CapturePictures.this,GridPictures.class);
-                    startActivity(intent);
-
-            }
-        });
-    }
+//
+//    private void LoadImage() {
+//        buttonLoadImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                    Intent intent=new Intent(CapturePictures.this,GridPictures.class);
+//                    startActivity(intent);
+//
+//            }
+//        });
+//    }
 
     private void CaptureImage() {
 
         captureImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                    destFile = new File(file, "img_"
-                            + dateFormatter.format(new Date()).toString() + ".jpg");
-
-                    imageCaptureUri = Uri.fromFile(destFile);
-
-                    if (CameraUtils.checkPermissions(getApplicationContext())) {
-                        captureImage();
-
-                    } else {
-                        requestCameraPermission(MEDIA_TYPE_IMAGE);
-                    }
+                Intent cameraIntent = new Intent(
+                        android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
                  }
         });
     }
@@ -146,7 +134,7 @@ public class CapturePictures extends AppCompatActivity {
     {
         img = (ImageView) findViewById(R.id.img);
 
-        buttonLoadImage = (Button) findViewById(R.id.buttonLoadImage);
+//        buttonLoadImage = (Button) findViewById(R.id.buttonLoadImage);
         captureImages=(Button)findViewById(R.id.captureImages);
         CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(),pictureList );
         file = new File(Environment.getExternalStorageDirectory()
@@ -212,18 +200,12 @@ public class CapturePictures extends AppCompatActivity {
     {
         try
         {
-            bmpCompressImage = decodeFile(imageStoragePath);
 
-
-
+            bmpCompressImage = decodeFile(imagePath);
             img.setVisibility(ImageView.VISIBLE);
             img.setImageBitmap(bmpCompressImage);
-//            imageViewToByte(img);
-
-
-
-
-//                uploadimageurl(img1);
+            File file=new File(imagePath);
+            uploadimageurl(file);
 
                     //ADD IMAGE INTO DATABASE.
 
@@ -265,9 +247,9 @@ public class CapturePictures extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), msgSuccessUploadImage, Toast.LENGTH_SHORT).show();
 
 
-                    } else {
-                        if (jObj.optString("error_code").equals("401")) {
-                        }
+                    }
+                    else {
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -306,58 +288,6 @@ public class CapturePictures extends AppCompatActivity {
     }
 
 
-    private void uploadImageToDatabase(Bitmap fff) {
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        HashMap<String, String> params = new HashMap<>();
-        String image = getStringImage(bmpCompressImage);
-        File ff=new File(image);
-        params.put("image_url", image);
-        params.put("part_no",AllBarcodeScan.prtno);
-        params.put("sr_no",AllBarcodeScan.srno);
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                getIpUrlAllBarcode+IMAGE_UPLOAD,
-                new JSONObject(params), new Response.Listener<JSONObject>()
-        {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONObject jObj = new JSONObject(response.toString());
-                    if (jObj.getString("status").equals("Success"))
-
-                    {
-                        String msgSuccessUploadImage = jObj.getString("Message");
-
-                        Toast.makeText(getApplicationContext(), msgSuccessUploadImage, Toast.LENGTH_SHORT).show();
-
-                    }
-                    else {
-                        if (jObj.getString("status").equals("Failed"))
-                        {
-                            String msgFailedUploadImage = jObj.getString("Message");
-
-                            Toast.makeText(getApplicationContext(), msgFailedUploadImage, Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                } catch (Exception ee) {
-                    ee.printStackTrace();
-                    Toast.makeText(getApplicationContext(),"Something went wrong",Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, new Response.ErrorListener()
-        {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                Toast.makeText(getApplicationContext(),"Something went wrong",Toast.LENGTH_SHORT).show();
-
-            }
-
-        });
-        requestQueue.add(jsonObjReq);
-
-    }
-
     private String getStringImage(Bitmap bmpCompressImage) {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -369,7 +299,7 @@ public class CapturePictures extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
@@ -390,30 +320,30 @@ public class CapturePictures extends AppCompatActivity {
 
         };
 
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                // Refreshing the gallery
-                CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
-                File ffile=new File(imageStoragePath);
-//                Bitmap bit = (Bitmap) data.getExtras().get("data");
-//                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-//                bit.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-//                File destination = new File(
-//                        Environment.getExternalStorageDirectory(),
-//                        System.currentTimeMillis() + ".jpg");
-//                FileOutputStream fo;
-//                try {
-//                    destination.createNewFile();
-//                    fo = new FileOutputStream(destination);
-//                    fo.write(bytes.toByteArray());
-//                    fo.close();
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                imagePath = destination.getAbsolutePath();
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && null != data) {
+            // Refreshing the gallery
+
+//                CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
+//                File ffile=new File(imageStoragePath);
+                Bitmap bit = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                bit.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+                File destination = new File(
+                        Environment.getExternalStorageDirectory(),
+                        System.currentTimeMillis() + ".jpg");
+                FileOutputStream fo;
+                try {
+                    destination.createNewFile();
+                    fo = new FileOutputStream(destination);
+                    fo.write(bytes.toByteArray());
+                    fo.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                imagePath = destination.getAbsolutePath();
                 // successfully captured the image
                 // display it in image view
                 previewCapturedImage();
@@ -430,7 +360,7 @@ public class CapturePictures extends AppCompatActivity {
             }
         }
 
-    }
+
 
 //compress image after getting from camera
     private Bitmap decodeFile(String f) {

@@ -202,19 +202,19 @@
 
             <ImageView
                 android:id="@+id/partno_check"
-                android:layout_width="55dp"
+                android:layout_width="40dp"
                 android:layout_gravity="center"
-                android:layout_height="55dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="15dp"
                 android:visibility="invisible"
                 android:src="@drawable/check1"/>
             <ImageView
                 android:id="@+id/partno_check_cross"
-                android:layout_width="55dp"
+                android:layout_width="40dp"
                 android:visibility="invisible"
 
                 android:layout_gravity="center"
-                android:layout_height="55dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="15dp"
                 android:src="@drawable/cross"/>
 
@@ -253,19 +253,19 @@
                 android:background="@drawable/loginbutton"/>
             <ImageView
                 android:id="@+id/pono_chk"
-                android:layout_width="55dp"
+                android:layout_width="40dp"
                 android:visibility="invisible"
 
-                android:layout_height="55dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="15dp"
                 android:layout_gravity="center"
                 android:src="@drawable/check1"/>
             <ImageView
                 android:id="@+id/pono_check_cross"
-                android:layout_width="55dp"
+                android:layout_width="40dp"
                 android:visibility="invisible"
                 android:layout_gravity="center"
-                android:layout_height="55dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="15dp"
                 android:src="@drawable/cross"/>
         </LinearLayout>
@@ -305,10 +305,10 @@
 
             <ImageView
                 android:id="@+id/qty_check"
-                android:layout_width="55dp"
+                android:layout_width="40dp"
                 android:visibility="invisible"
 
-                android:layout_height="55dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
                 android:src="@drawable/check1" />
@@ -349,10 +349,10 @@
                 android:background="@drawable/loginbutton"/>
             <ImageView
                 android:id="@+id/boxno_check"
-                android:layout_width="55dp"
+                android:layout_width="40dp"
                 android:visibility="invisible"
 
-                android:layout_height="55dp"
+                android:layout_height="40dp"
                 android:layout_marginLeft="15dp"
                 android:layout_gravity="center"
                 android:src="@drawable/check1"/>
@@ -366,8 +366,8 @@
     <!--</ScrollView>-->
 
     <!--</RelativeLayout>-->
-
     <LinearLayout
+        android:id="@+id/linearSubmit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
