@@ -11,28 +11,23 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -56,33 +51,49 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class CapturePictures extends AppCompatActivity {
+public class CapturePictures extends AppCompatActivity
+{
     public static final int CAMERA_REQUEST = 12;
+
     public static String IMAGE_UPLOAD="/api/SRFormsAPI/AddImage";
+    String getIpUrlAllBarcode;
+
     ArrayList<ImageModel> list;
     public static final String IMAGE_DIRECTORY = "ImageScalling";
-    Button captureImages,buttonLoadImage;
     public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
-    private File destFile;
     public static final String IMAGE_EXTENSION = "jpg";
-    private File file;
     private static String imageStoragePath;
-    Uri fileUri;
-    Bitmap bmpCompressImage;
-    ImageView img;
-    private SimpleDateFormat dateFormatter;
+    ArrayList<String> pictureList=new ArrayList<>();
+    private String imagePath = "";
+
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     private static int RESULT_LOAD_IMAGE = 1;
-     String getIpUrlAllBarcode;
     public static SQLiteHelper sqLiteHelper;
+
+    Button captureImages,buttonLoadImage;
+
+    private File destFile;
+    private File file;
+    Uri fileUri;
+    Bitmap bmpCompressImage;
+    Bitmap bitmap = null;
+    ImageView img;
+
+    private SimpleDateFormat dateFormatter;
+
     SharedPreferences.Editor editor;
     SharedPreferences pref;
-    ArrayList<String> pictureList=new ArrayList<>();
-    private String imagePath = "";
-    String imagePaths;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -196,17 +207,24 @@ public class CapturePictures extends AppCompatActivity {
                 }).show();
     }
    //Show captured image
-    private void previewCapturedImage()
+    private void previewCapturedImage(String imagePath)
     {
         try
         {
 
-            bmpCompressImage = decodeFile(imagePath);
+            MultipartBody.Builder builder = new MultipartBody.Builder();
+            builder.setType(MultipartBody.FORM);
+            File file=new File(imagePath);
+            builder.addFormDataPart("image_url","Image",RequestBody.create(MediaType.parse("multipart/form-data"), file));
+            MultipartBody requestBody = builder.build();
+
+
+            bmpCompressImage = decodeFile(this.imagePath);
             img.setVisibility(ImageView.VISIBLE);
             img.setImageBitmap(bmpCompressImage);
-            File file=new File(imagePath);
-            uploadimageurl(file);
-
+            File file1=new File(this.imagePath);
+//            uploadimageurl(requestBody);
+            uploadImagemultipart(requestBody);
                     //ADD IMAGE INTO DATABASE.
 
 //            try{
@@ -228,10 +246,37 @@ public class CapturePictures extends AppCompatActivity {
         catch (NullPointerException e)
         {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
+    public void uploadImagemultipart(MultipartBody requestBody) throws JSONException {
 
-    public void uploadimageurl(final File fff)
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(getIpUrlAllBarcode)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ImageCaptureAPI api = retrofit.create(ImageCaptureAPI.class);
+            api.UploadMultipleImages(requestBody).enqueue(new Callback<Imageuploadresponse>() {
+
+                @Override
+                public void onResponse(Call<Imageuploadresponse> call, retrofit2.Response<Imageuploadresponse> response) {
+                    if (response.isSuccessful()) {
+
+                        Toast.makeText(getApplicationContext(),"Image Uploaded Successfully",Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Call<Imageuploadresponse> call, Throwable t) {
+
+                    t.printStackTrace();
+                }
+
+            });
+            }
+    public void uploadimageurl(final MultipartBody fff)
     {
         final File imagePathUpload= new File("file://" + fff);
         VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, getIpUrlAllBarcode+IMAGE_UPLOAD, new Response.Listener<NetworkResponse>() {
@@ -273,8 +318,8 @@ public class CapturePictures extends AppCompatActivity {
             }
 
             @Override
-            protected Map<String, File> getByteData() {
-                Map<String, File> params = new HashMap<>();
+            protected Map<String, MultipartBody> getByteData() {
+                Map<String, MultipartBody> params = new HashMap<>();
                 params.put("image_url", fff);
                 return params;
             }
@@ -320,14 +365,12 @@ public class CapturePictures extends AppCompatActivity {
 
         };
 
-        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && null != data) {
-            // Refreshing the gallery
-
-//                CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
-//                File ffile=new File(imageStoragePath);
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && null != data)
+        {
                 Bitmap bit = (Bitmap) data.getExtras().get("data");
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                 bit.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+             Uri selectedImage = data.getData();
                 File destination = new File(
                         Environment.getExternalStorageDirectory(),
                         System.currentTimeMillis() + ".jpg");
@@ -344,9 +387,10 @@ public class CapturePictures extends AppCompatActivity {
                 }
 
                 imagePath = destination.getAbsolutePath();
+                 bitmap = BitmapFactory.decodeFile(imagePath);
                 // successfully captured the image
                 // display it in image view
-                previewCapturedImage();
+                previewCapturedImage(imagePath);
             } else if (resultCode == RESULT_CANCELED) {
                 // user cancelled Image capture
                 Toast.makeText(getApplicationContext(),

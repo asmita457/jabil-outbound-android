@@ -17,6 +17,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
+
 /**
  * Custom request to make multipart header and upload file.
  *
@@ -88,7 +90,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
             }
 
             // populate data byte payload
-            Map<String, File> data = getByteData();
+            Map<String, MultipartBody> data = getByteData();
             if (data != null && data.size() > 0) {
                 dataParse(dos, data);
             }
@@ -109,7 +111,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @return Map data part label with data byte
      * @throws AuthFailureError
      */
-    protected Map<String, File> getByteData() throws AuthFailureError {
+    protected Map<String, MultipartBody> getByteData() throws AuthFailureError {
         return null;
     }
 
@@ -159,8 +161,8 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param data             loop through data
      * @throws IOException
      */
-    private void dataParse(DataOutputStream dataOutputStream, Map<String, File> data) throws IOException {
-        for (Map.Entry<String, File> entry : data.entrySet()) {
+    private void dataParse(DataOutputStream dataOutputStream, Map<String, MultipartBody> data) throws IOException {
+        for (Map.Entry<String, MultipartBody> entry : data.entrySet()) {
             buildDataPart(dataOutputStream, entry.getValue(), entry.getKey());
         }
     }
@@ -189,7 +191,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
      * @param inputName        name of data input
      * @throws IOException
      */
-    private void buildDataPart(DataOutputStream dataOutputStream, File dataFile, String inputName) throws IOException {
+    private void buildDataPart(DataOutputStream dataOutputStream, MultipartBody dataFile, String inputName) throws IOException {
         dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
         dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"" +
                 inputName + "\"; filename=\"" + "\"" + lineEnd);

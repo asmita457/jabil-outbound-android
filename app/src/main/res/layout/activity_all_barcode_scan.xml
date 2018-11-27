@@ -312,6 +312,15 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
                 android:src="@drawable/check1" />
+            <ImageView
+                android:id="@+id/qty_check_cross"
+                android:layout_width="40dp"
+                android:visibility="invisible"
+
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/cross" />
 
         </LinearLayout>
 
