@@ -62,31 +62,27 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CapturePictures extends AppCompatActivity
 {
-    public static final int CAMERA_REQUEST = 12;
-
     public static String IMAGE_UPLOAD="/api/SRFormsAPI/AddImage";
     String getIpUrlAllBarcode;
-
-    ArrayList<ImageModel> list;
     public static final String IMAGE_DIRECTORY = "ImageScalling";
     public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
     public static final String IMAGE_EXTENSION = "jpg";
     private static String imageStoragePath;
-    ArrayList<String> pictureList=new ArrayList<>();
     private String imagePath = "";
 
     public static final int MEDIA_TYPE_IMAGE = 1;
     private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
     private static int RESULT_LOAD_IMAGE = 1;
+    public static final int CAMERA_REQUEST = 12;
+
     public static SQLiteHelper sqLiteHelper;
 
-    Button captureImages,buttonLoadImage;
+    Button captureImages;
 
     private File destFile;
     private File file;
     Uri fileUri;
     Bitmap bmpCompressImage;
-    Bitmap bitmap = null;
     ImageView img;
 
     private SimpleDateFormat dateFormatter;
@@ -100,13 +96,11 @@ public class CapturePictures extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture_pictures);
         init();
+
+        //create SQLite database.
         sqLiteHelper = new SQLiteHelper(this, "Imagedb.sqlite", null, 1);
-
         sqLiteHelper.queryData("CREATE TABLE IF NOT EXISTS BOXIMAGE(Id INTEGER PRIMARY KEY AUTOINCREMENT, image BLOB)");
-
         CaptureImage();
-//        LoadImage();
-
     }
     public static byte[] imageViewToByte(ImageView image) {
         Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
@@ -115,7 +109,9 @@ public class CapturePictures extends AppCompatActivity
         byte[] byteArray = stream.toByteArray();
         return byteArray;
     }
-//
+
+//      Load images from gridview stored in database.
+
 //    private void LoadImage() {
 //        buttonLoadImage.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -133,9 +129,7 @@ public class CapturePictures extends AppCompatActivity
         captureImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cameraIntent = new Intent(
-                        android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                captureImage();
                  }
         });
     }
@@ -144,21 +138,19 @@ public class CapturePictures extends AppCompatActivity
     private void init()
     {
         img = (ImageView) findViewById(R.id.img);
-
-//        buttonLoadImage = (Button) findViewById(R.id.buttonLoadImage);
         captureImages=(Button)findViewById(R.id.captureImages);
-        CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(),pictureList );
-        file = new File(Environment.getExternalStorageDirectory()
-                + "/" + IMAGE_DIRECTORY);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
+        file = new File(Environment.getExternalStorageDirectory()+ "/" + IMAGE_DIRECTORY);
+
+        if (!file.exists())
+            {
+                file.mkdirs();
+            }
+
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
         getIpUrlAllBarcode = pref.getString("BaseUrlIp", "0");
 
-        dateFormatter = new SimpleDateFormat(
-                DATE_FORMAT, Locale.US);
+        dateFormatter = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 
     }
 //Camera Permission
@@ -206,27 +198,8 @@ public class CapturePictures extends AppCompatActivity
                     }
                 }).show();
     }
-   //Show captured image
-    private void previewCapturedImage(String imagePath)
-    {
-        try
-        {
 
-            MultipartBody.Builder builder = new MultipartBody.Builder();
-            builder.setType(MultipartBody.FORM);
-            File file=new File(imagePath);
-            builder.addFormDataPart("image_url","Image",RequestBody.create(MediaType.parse("multipart/form-data"), file));
-            MultipartBody requestBody = builder.build();
-
-
-            bmpCompressImage = decodeFile(this.imagePath);
-            img.setVisibility(ImageView.VISIBLE);
-            img.setImageBitmap(bmpCompressImage);
-            File file1=new File(this.imagePath);
-//            uploadimageurl(requestBody);
-            uploadImagemultipart(requestBody);
-                    //ADD IMAGE INTO DATABASE.
-
+//ADD IMAGE INTO DATABASE.
 //            try{
 //
 //                sqLiteHelper.insertData(
@@ -242,14 +215,8 @@ public class CapturePictures extends AppCompatActivity
 //            bmpCompressImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
 //            byteArray = stream.toByteArray();
 
-        }
-        catch (NullPointerException e)
-        {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+
+    //MultiPArt API using Retrofit
     public void uploadImagemultipart(MultipartBody requestBody) throws JSONException {
 
             Retrofit retrofit = new Retrofit.Builder()
@@ -271,77 +238,13 @@ public class CapturePictures extends AppCompatActivity
                 @Override
                 public void onFailure(Call<Imageuploadresponse> call, Throwable t) {
 
+                    Toast.makeText(getApplicationContext(),"Images select at least one image to upload",Toast.LENGTH_SHORT).show();
+
                     t.printStackTrace();
                 }
 
             });
             }
-    public void uploadimageurl(final MultipartBody fff)
-    {
-        final File imagePathUpload= new File("file://" + fff);
-        VolleyMultipartRequest multipartRequest = new VolleyMultipartRequest(Request.Method.POST, getIpUrlAllBarcode+IMAGE_UPLOAD, new Response.Listener<NetworkResponse>() {
-            @Override
-            public void onResponse(NetworkResponse response) {
-                String resultresponse = new String(response.data);
-                try {
-                    JSONObject jObj = new JSONObject(resultresponse);
-                    if (jObj.optBoolean("success"))
-                    {
-                        String msgSuccessUploadImage = jObj.getString("Message");
-
-                        Toast.makeText(getApplicationContext(), msgSuccessUploadImage, Toast.LENGTH_SHORT).show();
-
-
-                    }
-                    else {
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("part_no",AllBarcodeScan.prtno);
-                params.put("sr_no",AllBarcodeScan.srno);
-                return params;
-            }
-
-            @Override
-            protected Map<String, MultipartBody> getByteData() {
-                Map<String, MultipartBody> params = new HashMap<>();
-                params.put("image_url", fff);
-                return params;
-            }
-        };
-
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(multipartRequest);
-
-        multipartRequest.setShouldCache(false);
-        multipartRequest.setRetryPolicy(new DefaultRetryPolicy(60 * 1000, 0,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    }
-
-
-    private String getStringImage(Bitmap bmpCompressImage) {
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmpCompressImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageBytes = baos.toByteArray();
-        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        return encodedImage;
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,Intent data) {
@@ -365,12 +268,18 @@ public class CapturePictures extends AppCompatActivity
 
         };
 
-        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK && null != data)
-        {
-                Bitmap bit = (Bitmap) data.getExtras().get("data");
+        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+
+                CameraUtils.refreshGallery(getApplicationContext(), imageStoragePath);
+                //Compress image.
+                bmpCompressImage = decodeFile(imageStoragePath);
+                //set image to imageview
+                img.setVisibility(ImageView.VISIBLE);
+                img.setImageBitmap(bmpCompressImage);
+
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                bit.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-             Uri selectedImage = data.getData();
+                bmpCompressImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                 File destination = new File(
                         Environment.getExternalStorageDirectory(),
                         System.currentTimeMillis() + ".jpg");
@@ -387,10 +296,21 @@ public class CapturePictures extends AppCompatActivity
                 }
 
                 imagePath = destination.getAbsolutePath();
-                 bitmap = BitmapFactory.decodeFile(imagePath);
-                // successfully captured the image
-                // display it in image view
-                previewCapturedImage(imagePath);
+                File firstFille=new File(imagePath);
+
+                MultipartBody.Builder builder = new MultipartBody.Builder();
+            builder.setType(MultipartBody.FORM);
+            builder.addFormDataPart("image_url","Image",RequestBody.create(MediaType.parse("multipart/form-data"), firstFille));
+            builder.addFormDataPart("part_no",AllBarcodeScan.prtno);
+            builder.addFormDataPart("sr_no", AllBarcodeScan.srno);
+
+            MultipartBody requestBody = builder.build();
+
+            try {
+                uploadImagemultipart(requestBody);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             } else if (resultCode == RESULT_CANCELED) {
                 // user cancelled Image capture
                 Toast.makeText(getApplicationContext(),
@@ -403,10 +323,11 @@ public class CapturePictures extends AppCompatActivity
                         .show();
             }
         }
+        }
 
 
 
-//compress image after getting from camera
+//Compress image.
     private Bitmap decodeFile(String f) {
         Bitmap b = null;
         File ff=new File(f);
@@ -425,18 +346,7 @@ public class CapturePictures extends AppCompatActivity
             e.printStackTrace();
         }
 
-
-//        // The new size we want to scale to
-//        final int REQUIRED_SIZE=75;
-//
-//        // Find the correct scale value. It should be the power of 2.
-//        int scale = 1;
-//        while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-//                o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-//            scale *= 2;
-//        }
-
-        int IMAGE_MAX_SIZE = 800;
+        int IMAGE_MAX_SIZE = 1800;
         int scale = 1;
         if (o.outHeight > IMAGE_MAX_SIZE || o.outWidth > IMAGE_MAX_SIZE) {
             scale = (int) Math.pow(2, (int) Math.ceil(Math.log(IMAGE_MAX_SIZE /
@@ -484,7 +394,6 @@ public class CapturePictures extends AppCompatActivity
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         // start the image capture Intent
         startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
-//        previewCapturedImage();
 
     }
 

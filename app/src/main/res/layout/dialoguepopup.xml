@@ -17,7 +17,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="All part no's are scanned !
-Please try for other Sr No."/>
+Please try for other SR No."/>
 
     <Button
         android:id="@+id/backSr"

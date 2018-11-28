@@ -9,7 +9,7 @@ public class Imageuploadresponse
 {
     @SerializedName("Success")
     @Expose
-    public Boolean success;
+    public String success;
 //    @SerializedName("data")
 //    @Expose
 //    public List<String> data = null;

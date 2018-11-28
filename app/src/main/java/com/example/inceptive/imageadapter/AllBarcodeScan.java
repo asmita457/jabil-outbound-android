@@ -36,48 +36,55 @@ import java.util.HashMap;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickListener{
+public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickListener
+{
+    LinearLayout linearTotalQuantity,linearScanQuantity,quantityScan;
+    LinearLayout linearpart,linearSubmit;
 
     String ALL_BARCODE_SCAN="/api/SRFormsAPI/GetParameterDetails";
     String VALIDATE_QUANTITY="/api/SRFormsAPI/GetParameterDetails";
     public static String SUBMIT = "/api/SRFormsAPI/AddScanningInfo";
     String QUANTITY_TAG="quantity";
-    LinearLayout linearpart,linearSubmit;
+
+    String msgFailedBarcode,msgSuccessBarcode;
     String partSuccessMessage,partFailedMessage,poSuccessMessage,poFailedMessage;
-    View v;
     String totScan,scannedQty;
+    String boxNoString,partNoString,qtyString,poNoString,newString;
     String PART_NO_STRING="part_no";
     String PO_NO_STRING="po_number";
-    static TextView srNumber;
+    String TAG = "AllBarcodeScan" ;
+    String numbersOnly = "^[0-9]*$",scanned_qty,total_qty,shareTotalScan,shareScanQuantity;
+    String getflagcode,getIpUrlAllBarcode;
+    String flag="0",flag1="1",flag2="2",flag3="3",bxno,qy,ponos;
+    static String prtno,srno;
+
     Boolean Partimage=false,QuantityImage=false,BoxnoImage=false,PonoImage=false;
-    String boxNoString,partNoString,qtyString,poNoString,newString;
+    Boolean submitPartnoCheck,submitPonoCheck,submitQtyCheck,submitBoxnoCheck;
+
     static ImageView piccgallary,partno_check_cross,pono_chk,pono_check_cross,qty_check_cross;
-    static TextView partNo,qty,boxno,pono,submit,totalScanQuantity,ScanQuantity;
-    Intent intentr,data;
-    String msgFailedBarcode,msgSuccessBarcode;
-    static String pno,bno,qno,partCheckNo;
     static ImageView partno_check,qty_check,boxno_check;
+
+    static TextView partNo,qty,boxno,pono,submit,totalScanQuantity,ScanQuantity,srNumber;
+
+    Intent intentr,data;
+
     public static final int PART_NO = 0;
     public static final int QUANTITY =1;
     public static final int BOX_NO = 2;
     public static final int PO_NO = 3;
-    SharedPreferences pref;
-    String getflagcode,getIpUrlAllBarcode;
-    SharedPreferences.Editor editor;
-    LinearLayout linearTotalQuantity,linearScanQuantity,quantityScan;
-    String flag="0",flag1="1",flag2="2",flag3="3",bxno,qy,ponos;
-    static String prtno,srno;
+
     int barcodeFlag=0;
     Context context;
-    String TAG = "AllBarcodeScan" ;
-    String numbersOnly = "^[0-9]*$",scanned_qty,total_qty,shareTotalScan,shareScanQuantity;
-    Boolean submitPartnoCheck,submitPonoCheck,submitQtyCheck,submitBoxnoCheck;
 
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_barcode_scan);
+        //initialization
         init();
+        //
         Gallary();
         BoxNo();
 
@@ -87,12 +94,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
         PonoImage = pref.getBoolean("ponochk", false);
         QuantityImage = pref.getBoolean("quantitychk", false);
         BoxnoImage=pref.getBoolean("boxnochk",false);
-        linearScanQuantity=(LinearLayout)findViewById(R.id.linearScanQuantity);
-        linearTotalQuantity=(LinearLayout)findViewById(R.id.linearTotalQuantity);
-        quantityScan=(LinearLayout)findViewById(R.id.quantityScan);
-        totalScanQuantity=(TextView)findViewById(R.id.totalScanQuantity);
-        ScanQuantity=(TextView)findViewById(R.id.ScanQuantity);
-
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,11 +101,11 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                 Submit();
             }
         });
+
         quantityScan.setVisibility(ImageView.GONE);
         qty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                scanBarcode(v);
                 editor.putString("flagforscanbarcode", "2");
                 editor.apply();
                 Intent intent = new Intent(AllBarcodeScan.this, ScanAllBarcode.class);
@@ -127,7 +128,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                 {
                     editor.putString("flagforscanbarcode", "4");
                     editor.apply();
-
                     Intent intent = new Intent(AllBarcodeScan.this, ScanAllBarcode.class);
                     intent.putExtra("BarcodeKey", flag3);
                     startActivityForResult(intent, PO_NO);
@@ -150,29 +150,27 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
 }
         });
 
+        //get string from previous activity to next using intent
         intentr = getIntent();
         newString = intentr.getStringExtra("Sr_Number");
         String newSrString = pref.getString("Sr_Number", null);
         srNumber.setText(newSrString);
         srno=srNumber.getText().toString();
 
-
+        //get shared preferance values
         partNoString = pref.getString("Part_No", null);
         qtyString = pref.getString("Quantity", null);
         boxNoString = pref.getString("Box_No", null);
         poNoString = pref.getString("Po_No", null);
-
-
-
 
         partNo.setText(partNoString);
         qty.setText(qtyString);
         boxno.setText(boxNoString);
         pono.setText(poNoString);
 
-        bxno=boxno.getText().toString();
-        qy=qty.getText().toString();
         prtno=partNo.getText().toString();
+        qy=qty.getText().toString();
+        bxno=boxno.getText().toString();
         ponos=pono.getText().toString();
 
         if((bxno==null || bxno.equals("")))
@@ -206,7 +204,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                 if(qty.getText().toString().trim().matches(numbersOnly))
                 {
                     String validate_qty=qty.getText().toString();
-                    qty_check.setVisibility(ImageView.VISIBLE);
                     editor.putBoolean("quantitychk", true);
                     editor.apply();
                     ValidateQuantity(validate_qty);
@@ -233,7 +230,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                             }
                         });
                         dialog.show();
-//                    Toast.makeText(getApplicationContext(),"Accept only numbers",Toast.LENGTH_SHORT).show();
                     }
 
                 if(BoxnoImage)
@@ -272,6 +268,7 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
 
     }
 
+    //show all partno's of particular SR no's are scanned.
     private void dialogueMethod()
     {
         final AppCompatDialog dialog = new AppCompatDialog(AllBarcodeScan.this);
@@ -294,6 +291,8 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
         editor.clear();
         editor.apply();
     }
+
+    //Quantity validation.
     private void ValidateQuantity(String validate_qty) {
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -316,8 +315,8 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                         String msg = jObj.getString("message");
 
                         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-//                           qty_check.setVisibility(ImageView.VISIBLE);
-//                        qty_check_cross.setVisibility(ImageView.GONE);
+                           qty_check.setVisibility(ImageView.VISIBLE);
+                        qty_check_cross.setVisibility(ImageView.GONE);
 
                     }
                     else {
@@ -327,8 +326,8 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                             String msgFailed = jObj.getString("message");
 
                             Toast.makeText(getApplicationContext(), msgFailed, Toast.LENGTH_SHORT).show();
-//                            qty_check_cross.setVisibility(ImageView.VISIBLE);
-//                            qty_check.setVisibility(ImageView.GONE);
+                            qty_check_cross.setVisibility(ImageView.VISIBLE);
+                            qty_check.setVisibility(ImageView.GONE);
                         }
 
                     }
@@ -356,8 +355,7 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
         boxno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                scanBarcode(v);
-                if(QuantityImage)
+                if(qty_check.isShown())
                 {
                     editor.putString("flagforscanbarcode", "3");
                     editor.apply();
@@ -415,34 +413,44 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
     private void init() {
 
         srNumber = (TextView) findViewById(R.id.srNumber);
-        piccgallary = (ImageView) findViewById(R.id.piccgalary);
         pono = (TextView) findViewById(R.id.pono);
         boxno = (TextView) findViewById(R.id.boxNo);
         qty = (TextView) findViewById(R.id.qty);
         partNo = (TextView) findViewById(R.id.partNo);
         submit = (TextView) findViewById(R.id.submit);
+        totalScanQuantity=(TextView)findViewById(R.id.totalScanQuantity);
+        ScanQuantity=(TextView)findViewById(R.id.ScanQuantity);
+
         partno_check_cross = (ImageView) findViewById(R.id.partno_check_cross);
         partno_check = (ImageView) findViewById(R.id.partno_check);
         qty_check = (ImageView) findViewById(R.id.qty_check);
         qty_check_cross=(ImageView)findViewById(R.id.qty_check_cross);
         boxno_check = (ImageView) findViewById(R.id.boxno_check);
+        piccgallary = (ImageView) findViewById(R.id.piccgalary);
+        pono_check_cross=(ImageView)findViewById(R.id.pono_check_cross);
+        pono_chk=(ImageView)findViewById(R.id.pono_chk);
         linearpart=(LinearLayout)findViewById(R.id.linearpart);
+
+        linearScanQuantity=(LinearLayout)findViewById(R.id.linearScanQuantity);
+        linearTotalQuantity=(LinearLayout)findViewById(R.id.linearTotalQuantity);
+        quantityScan=(LinearLayout)findViewById(R.id.quantityScan);
         linearSubmit=(LinearLayout)findViewById(R.id.linearSubmit);
+
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
         getIpUrlAllBarcode = pref.getString("BaseUrlIp", "0");
         shareTotalScan = pref.getString("TOTAL_SCAN", "");
         shareScanQuantity = pref.getString("SCANNED", "");
+
         if(!shareTotalScan.equals("") && !shareScanQuantity.equals(""))
         {
             totalScanQuantity.setText( pref.getString("TOTAL_SCAN", ""));
             ScanQuantity.setText(pref.getString("SCANNED",""));
         }
 
-        pono_check_cross=(ImageView)findViewById(R.id.pono_check_cross);
-        pono_chk=(ImageView)findViewById(R.id.pono_chk);
     }
 
+    //check partNO and poNo barcode API
     private void checkBarcode(final int flag)
     {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -473,7 +481,7 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
 
                     {
                         msgSuccessBarcode = jObj.getString("message");
-
+                        //for success response
                         Toast.makeText(getApplicationContext(), msgSuccessBarcode, Toast.LENGTH_SHORT).show();
                         if(flag==1)
                         {
@@ -504,12 +512,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                                             if(totScan.equals(scanned_qty))
                                             {
                                                 dialogueMethod();
-//                                                Intent intent = new Intent(AllBarcodeScan.this, ScanSrNumber.class);
-//                                                startActivity(intent);
-//                                                quantityScan.setVisibility(View.GONE);
-//                                                linearpart.setVisibility(View.GONE);
-//                                                linearSubmit.setVisibility(View.GONE);
-
                                             }
                                         }
                                         else
@@ -519,11 +521,9 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                                         }
                                 }
 
+                                }
 
-                            }
-
-
-                             if(QuantityImage)
+                                if(QuantityImage)
                              {
                                  qty_check.setVisibility(ImageView.VISIBLE);
 
@@ -533,11 +533,9 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                                 boxno_check.setVisibility(ImageView.VISIBLE);
                             }
 
-
-                        }
+                            }
                         else
                         {
-//                            editor.apply();
                             poSuccessMessage=msgSuccessBarcode;
                              total_qty=jObj.getString("total_qty");
                             scanned_qty= jObj.getString("scanned_qty");
@@ -554,13 +552,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                             if(totScan.equals(scanned_qty))
                             {
                                 dialogueMethod();
-
-//                                Intent intent = new Intent(AllBarcodeScan.this, ScanSrNumber.class);
-//                                startActivity(intent);
-//                                quantityScan.setVisibility(View.GONE);
-//                                linearpart.setVisibility(View.GONE);
-//                                linearSubmit.setVisibility(View.GONE);
-
                             }
                             pono_check_cross.setVisibility(ImageView.GONE);
                             pono_chk.setVisibility(ImageView.VISIBLE);
@@ -585,12 +576,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                                         if(totScan.equals(scanned_qty))
                                         {
                                             dialogueMethod();
-//                                            Intent intent = new Intent(AllBarcodeScan.this, ScanSrNumber.class);
-//                                            startActivity(intent);
-//                                            quantityScan.setVisibility(View.GONE);
-//                                            linearpart.setVisibility(View.GONE);
-//                                            linearSubmit.setVisibility(View.GONE);
-
                                         }
                                     }
                                     else
@@ -658,12 +643,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                                          if(totScan.equals(scanned_qty))
                                          {
                                              dialogueMethod();
-//                                             Intent intent = new Intent(AllBarcodeScan.this, ScanSrNumber.class);
-//                                             startActivity(intent);
-//                                             quantityScan.setVisibility(View.GONE);
-//                                             linearpart.setVisibility(View.GONE);
-//                                             linearSubmit.setVisibility(View.GONE);
-
                                          }
                                          }
                                  }
@@ -770,12 +749,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                     if(totScan.equals(scanned_qty))
                     {
                         dialogueMethod();
-//                        Intent intent = new Intent(AllBarcodeScan.this, ScanSrNumber.class);
-//                        startActivity(intent);
-//                        quantityScan.setVisibility(View.GONE);
-//                        linearpart.setVisibility(View.GONE);
-//                        linearSubmit.setVisibility(View.GONE);
-
                     }
                 }
                 else
@@ -812,6 +785,7 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
         }
     }
 
+    //POST API for submit button
     private void submitData()
     {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -835,8 +809,6 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                         String msgSuccessSubmit = jObj.getString("message");
 
                         Toast.makeText(getApplicationContext(), msgSuccessSubmit, Toast.LENGTH_SHORT).show();
-//
-
                         partno_check.setVisibility(ImageView.GONE);
                         qty_check.setVisibility(ImageView.GONE);
                         boxno_check.setVisibility(ImageView.GONE);
@@ -855,24 +827,8 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                         editor.remove("boxnochk");
                         editor.remove("quantitychk");
                         editor.remove("ponochk");
-//                        editor.remove("");
-//                        editor.remove("");
-//                        editor.remove("");
-//                        editor.remove("");
-//
                         quantityScan.setVisibility(View.GONE);
-//
                         editor.apply();
-//
-//                editor.clear();
-//                editor.apply();
-
-//                        Intent intent=new Intent(AllBarcodeScan.this,AllBarcodeScan.class);
-//                        startActivity(intent);
-
-//                        String finalSrNo = pref.getString("Sr_Number", null);
-//                        srNumber.setText(finalSrNo);
-
                     }
                     else {
                         if (jObj.getString("status").equals("Failed"))
