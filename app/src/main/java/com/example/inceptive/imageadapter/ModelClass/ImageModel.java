@@ -1,4 +1,4 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.ModelClass;
 
 public class ImageModel {
 

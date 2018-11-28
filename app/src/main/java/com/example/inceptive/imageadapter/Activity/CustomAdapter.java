@@ -1,4 +1,4 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.Activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+
+import com.example.inceptive.imageadapter.R;
 
 import java.util.ArrayList;
 

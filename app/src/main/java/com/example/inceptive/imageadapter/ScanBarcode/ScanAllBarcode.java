@@ -1,28 +1,16 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.ScanBarcode;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.inceptive.imageadapter.rest.url;
+import com.example.inceptive.imageadapter.Activity.AllBarcodeScan;
+import com.example.inceptive.imageadapter.R;
 import com.google.zxing.Result;
-
-import org.json.JSONObject;
-
-import java.util.HashMap;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 

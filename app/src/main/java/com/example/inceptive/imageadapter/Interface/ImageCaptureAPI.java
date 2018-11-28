@@ -1,4 +1,6 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.Interface;
+
+import com.example.inceptive.imageadapter.Activity.Imageuploadresponse;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;

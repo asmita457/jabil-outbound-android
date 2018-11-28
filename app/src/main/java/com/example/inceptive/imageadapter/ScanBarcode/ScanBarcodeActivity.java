@@ -1,4 +1,4 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.ScanBarcode;
 
 import android.Manifest;
 import android.content.Intent;
@@ -9,8 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.TextureView;
 
+import com.example.inceptive.imageadapter.R;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;

@@ -1,4 +1,4 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.Activity;
 
 class PrefTag
 {

@@ -1,4 +1,4 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.rest;
 import android.graphics.Bitmap;
 
 import com.android.volley.AuthFailureError;

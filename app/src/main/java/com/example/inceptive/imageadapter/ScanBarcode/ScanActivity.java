@@ -1,4 +1,4 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.ScanBarcode;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +17,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.inceptive.imageadapter.rest.url;
+import com.example.inceptive.imageadapter.Activity.AllBarcodeScan;
+import com.example.inceptive.imageadapter.R;
+import com.example.inceptive.imageadapter.Activity.ScanSrNumber;
 import com.google.zxing.Result;
 
 import org.json.JSONObject;

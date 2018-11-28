@@ -1,23 +1,16 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.Activity;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialog;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,14 +20,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.inceptive.imageadapter.rest.url;
-import com.google.zxing.Result;
+import com.example.inceptive.imageadapter.R;
+import com.example.inceptive.imageadapter.ScanBarcode.ScanAllBarcode;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
-
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickListener
 {
@@ -66,7 +57,7 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
 
     static TextView partNo,qty,boxno,pono,submit,totalScanQuantity,ScanQuantity,srNumber;
 
-    Intent intentr,data;
+    Intent intentr;
 
     public static final int PART_NO = 0;
     public static final int QUANTITY =1;

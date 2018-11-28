@@ -1,22 +1,21 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
+
+import com.example.inceptive.imageadapter.ModelClass.ImageModel;
+import com.example.inceptive.imageadapter.R;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-class ImageListAdapter extends BaseAdapter {
+public class ImageListAdapter extends BaseAdapter {
 
     byte[] boxImage;
     private Context context;

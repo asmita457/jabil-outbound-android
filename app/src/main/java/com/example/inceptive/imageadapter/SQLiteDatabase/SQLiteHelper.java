@@ -1,4 +1,4 @@
-package com.example.inceptive.imageadapter;
+package com.example.inceptive.imageadapter.SQLiteDatabase;
 
 import android.content.Context;
 import android.database.Cursor;

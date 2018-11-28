@@ -21,18 +21,18 @@
         android:roundIcon="@mipmap/logojjbl"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ScanSrNumber" />
-        <activity android:name=".ScanBarcodeActivity" />
-        <activity android:name=".AllBarcodeScan" />
-        <activity android:name=".ScanActivity" />
-        <activity android:name=".CapturePictures" />
+        <activity android:name=".Activity.ScanSrNumber" />
+        <activity android:name=".ScanBarcode.ScanBarcodeActivity" />
+        <activity android:name=".Activity.AllBarcodeScan" />
+        <activity android:name=".ScanBarcode.ScanActivity" />
+        <activity android:name=".Activity.CapturePictures" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -44,13 +44,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ScanAllBarcode" />
+        <activity android:name=".ScanBarcode.ScanAllBarcode" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e906216fb24d971716e8fccdb1465767ba371c5b" />
 
-        <activity android:name=".GridPictures" />
+        <activity android:name=".Activity.GridPictures" />
     </application>
 
 </manifest>
