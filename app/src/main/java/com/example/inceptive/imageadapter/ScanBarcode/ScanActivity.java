@@ -39,6 +39,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
     SharedPreferences pref;
     SharedPreferences.Editor editor;
     String ALL_BARCODE_SCAN="/api/SRFormsAPI/GetParameterDetails";
+    private String sr_no;
 
 
     @Override
@@ -66,39 +67,49 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
         Log.d("QRCodeScanner", result.getText());
          barcod=result.getText();
         codeScan=result.getText();
+        if(codeScan==null)
+        {
+            Toast.makeText(getApplicationContext(),"Barcode null",Toast.LENGTH_SHORT).show();
 
+        }
+        else
+        {
+
+            CheckSrNo(codeScan);
+
+        }
         Log.d("QRCodeScanner", result.getBarcodeFormat().toString());
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Scan Result");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                if(codeScan==null)
-                {
-                    Toast.makeText(getApplicationContext(),"codescan null",Toast.LENGTH_SHORT).show();
-
-                }
-                else
-                {
-
-                    CheckSrNo(codeScan);
-
-                }
-
-            }
-        });
-        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                scannerView.resumeCameraPreview(ScanActivity.this);
-
-            }
-        });
-        builder.setMessage(result.getText());
-        AlertDialog alert1 = builder.create();
-        alert1.show();
+//
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("Scan Result");
+//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//                if(codeScan==null)
+//                {
+//                    Toast.makeText(getApplicationContext(),"Barcode null",Toast.LENGTH_SHORT).show();
+//
+//                }
+//                else
+//                {
+//
+//                    CheckSrNo(codeScan);
+//
+//                }
+//
+//            }
+//        });
+//        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                scannerView.resumeCameraPreview(ScanActivity.this);
+//
+//            }
+//        });
+////        builder.setMessage(result.getText());
+//        AlertDialog alert1 = builder.create();
+//        alert1.show();
     }
 
     private void CheckSrNo(String scanBar) {
@@ -106,7 +117,7 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("type", Type_SR_NO);
-        params.put("sr_no",scanBar );
+        params.put("srid",scanBar );
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,getIpUrl+ALL_BARCODE_SCAN,
                 new JSONObject(params), new Response.Listener<JSONObject>()
         {
@@ -120,10 +131,12 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
                         String msg = jObj.getString("message");
 
                         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                        sr_no=jObj.getString("sr_no");
+
                         Intent intent = new Intent(ScanActivity.this, AllBarcodeScan.class);
-                        editor.putString("Sr_Number", codeScan);
+                        editor.putString("Sr_Number", sr_no);
                         editor.apply();
-                        intent.putExtra("Sr_Number", codeScan);
+                        intent.putExtra("Sr_Number", sr_no);
                         startActivity(intent);
 
                     }

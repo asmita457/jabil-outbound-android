@@ -16,14 +16,14 @@
         android:textColor="@color/black"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="All part no's are scanned !
+        android:text="All part number's are scanned !
 Please try for other SR No."/>
 
     <Button
         android:id="@+id/backSr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go to home page!!"
+        android:text="Go to home page"
         android:textSize="18dp"
         android:padding="10dp"
         android:textColor="@color/white"
