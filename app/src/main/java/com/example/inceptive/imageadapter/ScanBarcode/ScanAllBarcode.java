@@ -18,7 +18,7 @@ public class ScanAllBarcode extends AppCompatActivity implements  ZXingScannerVi
 
     Intent intent;
     private ZXingScannerView scannerViewView;
-    String partnoScan,quantityScan,boxnoScan,ponoScan;
+    String partnoScan,quantityScan,boxnoScan,secondQuantity,secondPartnoScan,secondQty,ponoScan;
     String Flag;
 
     SharedPreferences pref;
@@ -44,6 +44,8 @@ public class ScanAllBarcode extends AppCompatActivity implements  ZXingScannerVi
         scannerViewView.startCamera();
         scannerViewView.setSoundEffectsEnabled(true);
         scannerViewView.setAutoFocus(true);
+        scannerViewView.setMinimumHeight(30);
+        scannerViewView.setMinimumWidth(30);
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
         Intent intentBarcode=getIntent();
@@ -93,6 +95,22 @@ public class ScanAllBarcode extends AppCompatActivity implements  ZXingScannerVi
                     ponoScan=rslt.getText();
 //                    intent.putExtra("Po_No",ponoScan);
                     editor.putString("Po_No", ponoScan);
+                    editor.apply();
+                    startActivity(intent);
+                }else if (Flag.equals("4"))
+                {
+//                    CheckBarcode(Flag,rslt);
+                    secondPartnoScan=rslt.getText();
+//                    intent.putExtra("Part_No", partnoScan);
+                    editor.putString("Second_Part_No", secondPartnoScan);
+                    editor.apply();
+                    startActivity(intent);
+                }else if (Flag.equals("5"))
+                {
+//                    CheckBarcode(Flag,rslt);
+                    secondQuantity=rslt.getText();
+//                    intent.putExtra("Part_No", partnoScan);
+                    editor.putString("Second_Quantity", secondQuantity);
                     editor.apply();
                     startActivity(intent);
                 }

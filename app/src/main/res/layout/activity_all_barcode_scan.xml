@@ -289,6 +289,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
             android:layout_height="wrap_content">
 
             <TextView
@@ -329,54 +330,149 @@
 
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Box No"
-            android:layout_gravity="start"
-            android:gravity="start"
-            android:layout_marginTop="15dp"
-            android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="400dp"
-                android:id="@+id/boxNo"
-                android:padding="5dp"
-                android:layout_height="wrap_content"
-                android:hint="Box No"
-                android:textSize="15dp"
-                android:layout_marginLeft="10dp"
-                android:editable="false"
-                android:textColorHint="@color/hintcolor"
-                android:paddingLeft="5dp"
-                android:textColor="@color/black"
-                android:cursorVisible="false"
-                android:background="@drawable/loginbutton"/>
-            <ImageView
-                android:id="@+id/boxno_check"
-                android:layout_width="40dp"
-                android:visibility="invisible"
-
-                android:layout_height="40dp"
-                android:layout_marginLeft="15dp"
-                android:layout_gravity="center"
-                android:src="@drawable/check1"/>
-
-
-
-        </LinearLayout>
-
 
     </LinearLayout>
     <!--</ScrollView>-->
+<LinearLayout
+    android:layout_width="match_parent"
+    android:id="@+id/linearboxno"
+    android:padding="10dp"
+    android:layout_marginTop="20dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:background="@drawable/loginbutton"
+    android:layout_marginRight="40dp"
+    android:layout_marginLeft="40dp"
+    android:orientation="vertical"
+    android:layout_height="wrap_content">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Part No"
+        android:gravity="start"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="10dp"
+        android:layout_gravity="start"
+        android:textColor="@color/black" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        >
+        <TextView
+            android:layout_width="400dp"
+            android:id="@+id/partNoSecond"
+            android:layout_height="wrap_content"
+            android:hint="Part No"
+            android:textSize="15dp"
+            android:padding="5dp"
+            android:layout_marginLeft="10dp"
+            android:editable="false"
+            android:textColorHint="@color/hintcolor"
+            android:paddingLeft="5dp"
+            android:textColor="@color/black"
+            android:cursorVisible="false"
+            android:background="@drawable/loginbutton"/>
+
+        <ImageView
+            android:id="@+id/second_partno_check"
+            android:layout_width="40dp"
+            android:layout_gravity="center"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:visibility="invisible"
+            android:src="@drawable/check1"/>
+        <ImageView
+            android:id="@+id/second_partno_cross"
+            android:layout_width="40dp"
+            android:visibility="invisible"
+
+            android:layout_gravity="center"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/cross"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Qty"
+        android:gravity="start"
+        android:layout_gravity="start"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="400dp"
+            android:id="@+id/qtySecond"
+            android:padding="5dp"
+            android:layout_height="wrap_content"
+            android:hint="Qty"
+            android:textSize="15dp"
+            android:layout_marginLeft="10dp"
+            android:editable="false"
+            android:textColorHint="@color/hintcolor"
+            android:paddingLeft="5dp"
+            android:textColor="@color/black"
+            android:cursorVisible="false"
+            android:background="@drawable/loginbutton"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Box No"
+        android:layout_gravity="start"
+        android:gravity="start"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black"
+        android:layout_marginLeft="10dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="400dp"
+            android:id="@+id/boxNo"
+            android:padding="5dp"
+            android:layout_height="wrap_content"
+            android:hint="Box No"
+            android:textSize="15dp"
+            android:layout_marginLeft="10dp"
+            android:editable="false"
+            android:textColorHint="@color/hintcolor"
+            android:paddingLeft="5dp"
+            android:textColor="@color/black"
+            android:cursorVisible="false"
+            android:background="@drawable/loginbutton"/>
+        <ImageView
+            android:id="@+id/boxno_check"
+            android:layout_width="40dp"
+            android:visibility="invisible"
+
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_gravity="center"
+            android:src="@drawable/check1"/>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>
     <!--</RelativeLayout>-->
     <LinearLayout
         android:id="@+id/linearSubmit"
