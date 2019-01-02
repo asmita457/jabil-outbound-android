@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDialog;
 import android.view.View;
@@ -54,7 +55,7 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
 //    Boolean submitQtyCheck,submitBoxnoCheck;
 
     static ImageView piccgallary,partno_check_cross,pono_chk,pono_check_cross,partno_check;
-    static ImageView qty_check_cross,qty_check,boxno_check,second_partno_check,second_partno_cross;
+    static ImageView qty_check_cross,qty_check,second_partno_check,second_partno_cross;
 
     static TextView partNo,qty,boxno,pono,submit,totalScanQuantity,ScanQuantity,srNumber,partnoSecond,qtySecond;
 
@@ -64,12 +65,17 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
     public static final int QUANTITY =1;
     public static final int BOX_NO = 2;
     public static final int PO_NO = 3;
+    public static final int Second_Quantity = 5;
+    public static final int Second_Part_No = 4;
 
     int barcodeFlag=0;
     Context context;
 
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+    private String firstQuantityFlag;
+    private String secondQuantityFlag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,7 +157,7 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                 editor.apply();
                 Intent intent = new Intent(AllBarcodeScan.this, ScanAllBarcode.class);
                 intent.putExtra("BarcodeKey", flag4);
-                startActivityForResult(intent, PART_NO);
+                startActivityForResult(intent, Second_Part_No);
 
             }
         });
@@ -233,7 +239,8 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
                     String validate_qty=qty.getText().toString();
 //                    editor.putBoolean("quantitychk", true);
 //                    editor.apply();
-                    ValidateQuantity(validate_qty);
+                    firstQuantityFlag="1";
+                    ValidateQuantity(firstQuantityFlag);
                     flagCheck();
 
                 }
@@ -288,8 +295,42 @@ public class AllBarcodeScan extends AppCompatActivity implements  View.OnClickLi
 
             if(getflagcode.equals("6"))
             {
-                barcodeFlag=3;
-                checkBarcode(barcodeFlag);
+
+                if(prtno.equals(secondndpartnoString))
+                {
+                    Toast.makeText(getApplicationContext(),"Part is matched",Toast.LENGTH_SHORT).show();
+                    flagCheck();
+                    second_partno_check.setVisibility(View.VISIBLE);
+                    second_partno_cross.setVisibility(View.GONE);
+
+                }
+                else
+                {
+                    final AppCompatDialog dialog = new AppCompatDialog(AllBarcodeScan.this);
+                    dialog.setContentView(R.layout.partnomatchedpopup);
+                    dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    Button partnoOk = (Button) dialog.findViewById(R.id.partnoOk);
+
+                    dialog.setCanceledOnTouchOutside(true);
+
+                    partnoOk.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(AllBarcodeScan.this, ScanAllBarcode.class);
+                            intent.putExtra("BarcodeKey", flag4);
+                            startActivityForResult(intent, Second_Part_No);
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                    flagCheck();
+                    second_partno_cross.setVisibility(View.VISIBLE);
+                    second_partno_check.setVisibility(View.GONE);
+
+                }
+//                barcodeFlag=3;
+//                checkBarcode(barcodeFlag);
             }
         }
 
@@ -316,7 +357,34 @@ else
             String validate_second_qty=qtySecond.getText().toString();
 //            editor.putBoolean("quantitychk", true);
 //            editor.apply();
-            ValidateQuantity(validate_second_qty);
+            secondQuantityFlag="2";
+            if(qy.equals(validate_second_qty))
+            {
+                Toast.makeText(getApplicationContext(),"Quantity is matched",Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                final AppCompatDialog dialog = new AppCompatDialog(AllBarcodeScan.this);
+                dialog.setContentView(R.layout.quantitymatchepopup);
+                dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                Button quantityOk = (Button) dialog.findViewById(R.id.quantityOk);
+
+                dialog.setCanceledOnTouchOutside(true);
+
+                quantityOk.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(AllBarcodeScan.this, ScanAllBarcode.class);
+                        intent.putExtra("BarcodeKey", flag5);
+                        startActivityForResult(intent, Second_Quantity);
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+
+            }
+//            ValidateQuantity(secondQuantityFlag);
             flagCheck();
 
         }
@@ -334,7 +402,7 @@ else
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(AllBarcodeScan.this, ScanAllBarcode.class);
-                    intent.putExtra("BarcodeKey", flag1);
+                    intent.putExtra("BarcodeKey", flag5);
                     startActivityForResult(intent, QUANTITY);
                     dialog.dismiss();
                 }
@@ -350,6 +418,7 @@ else
     //show all partno's of particular SR no's are scanned.
     private void dialogueMethod()
     {
+        quantityScan.setVisibility(View.GONE);
         final AppCompatDialog dialog = new AppCompatDialog(AllBarcodeScan.this);
         dialog.setContentView(R.layout.dialoguepopup);
         dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -376,10 +445,23 @@ else
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("type",QUANTITY_TAG);
-        params.put("part_no", prtno);
-        params.put("sr_no",srno );
-        params.put("quantity",qy );
+        if(validate_qty=="1")
+        {
+            params.put("type",QUANTITY_TAG);
+            params.put("part_no", prtno);
+            params.put("sr_no",srno );
+            params.put("po_number",ponos );
+            params.put("quantity",qy );
+
+        }else if(validate_qty=="2")
+        {
+            params.put("type",QUANTITY_TAG);
+            params.put("part_no", prtno);
+            params.put("sr_no",srno );
+            params.put("po_number",ponos );
+            params.put("quantity",secondqtyString );
+
+        }
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,getIpUrlAllBarcode+VALIDATE_QUANTITY,
                 new JSONObject(params), new Response.Listener<JSONObject>()
@@ -393,6 +475,7 @@ else
                     {
                         String msg = jObj.getString("message");
 
+                        submit.setEnabled(true);
                         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 //                           qty_check.setVisibility(ImageView.VISIBLE);
 //                        qty_check_cross.setVisibility(ImageView.GONE);
@@ -405,8 +488,7 @@ else
                             String msgFailed = jObj.getString("message");
 
                             Toast.makeText(getApplicationContext(), msgFailed, Toast.LENGTH_SHORT).show();
-//                            qty_check_cross.setVisibility(ImageView.VISIBLE);
-//                            qty_check.setVisibility(ImageView.GONE);
+                            disabledSubmitButton();
                         }
 
                     }
@@ -428,6 +510,24 @@ else
 
         });
         requestQueue.add(jsonObjReq);
+    }
+
+    private void disabledSubmitButton() {
+//        submit.setEnabled(false);
+
+        submit.setActivated(false);
+        submit.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.disabled_background_color));
+        submit.setTextColor(ContextCompat.getColor(getApplicationContext(),R.color.disabled_text_color));
+        submit.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick (View v){
+                if(!submit.isActivated()){
+                    Toast.makeText(AllBarcodeScan.this, "Check Quantity",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                //else do your stuff
+            }
+    });
     }
 
     private void BoxNo() {
@@ -465,23 +565,37 @@ else
     //Submit data
     private void Submit()
     {
-//        submitBoxnoCheck=boxno_check.isShown();
         submitPartnoCheck=partno_check.isShown();
         submitPonoCheck=pono_chk.isShown();
         submitSecondPartnoCheck=second_partno_check.isShown();
-//        submitQtyCheck=qty_check.isShown();
 
-//        if (submitQtyCheck && submitPonoCheck && submitPartnoCheck && submitBoxnoCheck) {
-        if (submitPonoCheck && submitPartnoCheck && submitSecondPartnoCheck) {
-
-            editor.putString("flagforscanbarcode", "0");
-            submitData();
-            }
+        if(prtno==null && prtno.equals("") && qy==null && qy.equals("") && bxno==null && bxno.equals("") && ponos==null && ponos.equals("") && secondqtyString==null && secondqtyString.equals("") && secondndpartnoString==null && secondndpartnoString.equals(""))
+        {
+            Toast.makeText(getApplicationContext(),"Please fill all details",Toast.LENGTH_SHORT).show();
+        }
         else
         {
-            Toast.makeText(getApplicationContext(),"Please check fields",Toast.LENGTH_SHORT).show();
+            if (submitPonoCheck && submitPartnoCheck && submitSecondPartnoCheck) {
 
+                editor.putString("flagforscanbarcode", "0");
+                if((secondndpartnoString.equals(prtno)) && (secondqtyString.equals(qy)))
+                {
+                    submitData();
+
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Please check Part No. & Quantity",Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(),"Please check fields",Toast.LENGTH_SHORT).show();
+
+            }
         }
+//        if (submitQtyCheck && submitPonoCheck && submitPartnoCheck && submitBoxnoCheck) {
+
 
     }
 
@@ -550,6 +664,7 @@ else
             params.put("type", PO_NO_STRING);
             params.put("sr_no",srno );
             params.put("po_number",ponos );
+            params.put("part_no",prtno );
 
         }else if(flag == 3)
         {
@@ -601,6 +716,7 @@ else
                                             scannedQty=ScanQuantity.getText().toString();
                                             if(totScan.equals(scanned_qty))
                                             {
+                                                quantityScan.setVisibility(View.GONE);
                                                 dialogueMethod();
                                             }
                                         }
@@ -612,6 +728,41 @@ else
                                 }
 
                                 }
+
+                            if(secondndpartnoString != null) {
+                                if (secondndpartnoString.equals("")) {
+                                    second_partno_cross.setVisibility(ImageView.GONE);
+                                    second_partno_check.setVisibility(ImageView.GONE);
+                                } else {
+
+                                    if(prtno.equals(secondndpartnoString))
+                                    {
+                                        second_partno_check.setVisibility(View.VISIBLE);
+                                        second_partno_cross.setVisibility(View.GONE);
+
+                                    }
+                                    else
+                                    {
+                                        second_partno_cross.setVisibility(View.VISIBLE);
+                                        second_partno_check.setVisibility(View.GONE);
+
+
+                                    }
+//                                    if (SecondPartnoImage) {
+//                                        second_partno_cross.setVisibility(ImageView.GONE);
+//                                        second_partno_check.setVisibility(ImageView.VISIBLE);
+//
+//                                        if (totScan.equals(scanned_qty)) {
+//                                            quantityScan.setVisibility(View.GONE);
+//                                            dialogueMethod();
+//                                        }
+//                                    } else {
+//                                        second_partno_cross.setVisibility(ImageView.VISIBLE);
+//                                        second_partno_check.setVisibility(ImageView.GONE);
+//
+//                                    }
+                                }
+                            }
 
 //                                if(QuantityImage)
 //                             {
@@ -641,6 +792,7 @@ else
                             scannedQty=ScanQuantity.getText().toString();
                             if(totScan.equals(scanned_qty))
                             {
+                                quantityScan.setVisibility(View.GONE);
                                 dialogueMethod();
                             }
                             pono_check_cross.setVisibility(ImageView.GONE);
@@ -658,15 +810,21 @@ else
                                     {
                                         partno_check_cross.setVisibility(ImageView.GONE);
                                         partno_check.setVisibility(ImageView.VISIBLE);
-                                        quantityScan.setVisibility(View.VISIBLE);
+                                        if(totScan.equals(scanned_qty))
+                                        {
+                                            quantityScan.setVisibility(View.GONE);
+                                            dialogueMethod();
+                                        }
+                                        else
+                                        {
+                                            quantityScan.setVisibility(View.VISIBLE);
+
+                                        }
                                         totalScanQuantity.setText( pref.getString("TOTAL_SCAN", ""));
                                         ScanQuantity.setText(pref.getString("SCANNED",""));
                                         totScan=totalScanQuantity.getText().toString();
                                         scannedQty=ScanQuantity.getText().toString();
-                                        if(totScan.equals(scanned_qty))
-                                        {
-                                            dialogueMethod();
-                                        }
+
                                     }
                                     else
                                     {
@@ -683,22 +841,33 @@ else
                                         second_partno_cross.setVisibility(ImageView.GONE);
                                         second_partno_check.setVisibility(ImageView.GONE);
                                     } else {
-                                        if (Partimage) {
-                                            second_partno_cross.setVisibility(ImageView.GONE);
-                                            second_partno_check.setVisibility(ImageView.VISIBLE);
-                                            quantityScan.setVisibility(View.VISIBLE);
-                                            totalScanQuantity.setText(pref.getString("TOTAL_SCAN", ""));
-                                            ScanQuantity.setText(pref.getString("SCANNED", ""));
-                                            totScan = totalScanQuantity.getText().toString();
-                                            scannedQty = ScanQuantity.getText().toString();
-                                            if (totScan.equals(scanned_qty)) {
-                                                dialogueMethod();
-                                            }
-                                        } else {
-                                            second_partno_cross.setVisibility(ImageView.VISIBLE);
-                                            second_partno_check.setVisibility(ImageView.GONE);
+
+                                        if(prtno.equals(secondndpartnoString))
+                                        {
+                                            second_partno_check.setVisibility(View.VISIBLE);
+                                            second_partno_cross.setVisibility(View.GONE);
 
                                         }
+                                        else
+                                        {
+                                            second_partno_cross.setVisibility(View.VISIBLE);
+                                            second_partno_check.setVisibility(View.GONE);
+
+
+                                        }
+//                                        if (SecondPartnoImage) {
+//                                            second_partno_cross.setVisibility(ImageView.GONE);
+//                                            second_partno_check.setVisibility(ImageView.VISIBLE);
+//
+//                                            if (totScan.equals(scanned_qty)) {
+//                                                quantityScan.setVisibility(View.GONE);
+//                                                dialogueMethod();
+//                                            }
+//                                        } else {
+//                                            second_partno_cross.setVisibility(ImageView.VISIBLE);
+//                                            second_partno_check.setVisibility(ImageView.GONE);
+//
+//                                        }
                                     }
                                 }
 //                            if(QuantityImage)
@@ -738,6 +907,7 @@ else
                                         scannedQty=ScanQuantity.getText().toString();
                                         if(totScan.equals(scanned_qty))
                                         {
+                                            quantityScan.setVisibility(View.GONE);
                                             dialogueMethod();
                                         }
                                     }
@@ -763,13 +933,14 @@ else
                                     {
                                         partno_check_cross.setVisibility(ImageView.GONE);
                                         partno_check.setVisibility(ImageView.VISIBLE);
-                                        quantityScan.setVisibility(View.VISIBLE);
+//                                        quantityScan.setVisibility(View.VISIBLE);
                                         totalScanQuantity.setText( pref.getString("TOTAL_SCAN", ""));
                                         ScanQuantity.setText(pref.getString("SCANNED",""));
                                         totScan=totalScanQuantity.getText().toString();
                                         scannedQty=ScanQuantity.getText().toString();
                                         if(totScan.equals(scanned_qty))
                                         {
+                                            quantityScan.setVisibility(View.GONE);
                                             dialogueMethod();
                                         }
                                     }
@@ -835,6 +1006,32 @@ else
                                  }
 
                              }
+                                if(secondndpartnoString != null)
+                                {
+                                    if(secondndpartnoString.equals(""))
+                                    {
+                                        second_partno_cross.setVisibility(ImageView.GONE);
+                                        second_partno_check.setVisibility(ImageView.GONE);
+                                    }
+                                    else
+                                    {
+                                        if(prtno.equals(secondndpartnoString))
+                                        {
+                                            second_partno_check.setVisibility(View.VISIBLE);
+                                            second_partno_cross.setVisibility(View.GONE);
+
+                                        }
+                                        else
+                                        {
+                                            second_partno_cross.setVisibility(View.VISIBLE);
+                                            second_partno_check.setVisibility(View.GONE);
+
+
+                                        }
+                                    }
+
+                                }
+
 
 
                             }
@@ -869,6 +1066,33 @@ else
                                     }
 
                                 }
+
+                                if(secondndpartnoString != null)
+                                {
+                                    if(secondndpartnoString.equals(""))
+                                    {
+                                        second_partno_cross.setVisibility(ImageView.GONE);
+                                        second_partno_check.setVisibility(ImageView.GONE);
+                                    }
+                                    else
+                                    {
+                                        if(prtno.equals(secondndpartnoString))
+                                        {
+                                            second_partno_check.setVisibility(View.VISIBLE);
+                                            second_partno_cross.setVisibility(View.GONE);
+
+                                        }
+                                        else
+                                        {
+                                            second_partno_cross.setVisibility(View.VISIBLE);
+                                            second_partno_check.setVisibility(View.GONE);
+
+
+                                        }
+                                    }
+
+                                }
+
 //
 //                                if(QuantityImage)
 //                                {
@@ -887,28 +1111,74 @@ else
 
                                 second_partno_cross.setVisibility(ImageView.VISIBLE);
                                 second_partno_check.setVisibility(ImageView.GONE);
+//
+//                                if(secondndpartnoString != null)
+//                                {
+//                                    if(secondndpartnoString.equals(""))
+//                                    {
+//                                        second_partno_cross.setVisibility(ImageView.GONE);
+//                                        second_partno_check.setVisibility(ImageView.GONE);
+//                                    }
+//                                    else
+//                                    {
+//                                        if(!SecondPartnoImage)
+//                                        {
+//                                            second_partno_cross.setVisibility(ImageView.VISIBLE);
+//                                            second_partno_check.setVisibility(ImageView.GONE);
+//                                        }
+//                                        else
+//                                        {
+//                                            second_partno_cross.setVisibility(ImageView.GONE);
+//                                            second_partno_check.setVisibility(ImageView.VISIBLE);
+//                                        }
+//                                    }
+//
+//                                }
 
-                                if(secondndpartnoString != null)
+                                if(prtno != null)
                                 {
-                                    if(secondndpartnoString.equals(""))
+                                    if(prtno.equals(""))
                                     {
-                                        second_partno_cross.setVisibility(ImageView.GONE);
-                                        second_partno_check.setVisibility(ImageView.GONE);
+                                        partno_check_cross.setVisibility(ImageView.GONE);
+                                        partno_check.setVisibility(ImageView.GONE);
                                     }
                                     else
                                     {
                                         if(!Partimage)
                                         {
-                                            second_partno_cross.setVisibility(ImageView.VISIBLE);
-                                            second_partno_check.setVisibility(ImageView.GONE);
+                                            partno_check_cross.setVisibility(ImageView.VISIBLE);
+                                            partno_check.setVisibility(ImageView.GONE);
                                         }
                                         else
                                         {
-                                            second_partno_cross.setVisibility(ImageView.GONE);
-                                            second_partno_check.setVisibility(ImageView.VISIBLE);
+                                            partno_check_cross.setVisibility(ImageView.GONE);
+                                            partno_check.setVisibility(ImageView.VISIBLE);
                                         }
                                     }
 
+                                }
+                                if(ponos != null) {
+                                    if (ponos.equals("")) {
+
+                                    } else {
+                                        if (!PonoImage) {
+                                            pono_check_cross.setVisibility(ImageView.VISIBLE);
+                                            pono_chk.setVisibility(ImageView.GONE);
+                                        } else if (PonoImage) {
+                                            pono_check_cross.setVisibility(ImageView.GONE);
+                                            pono_chk.setVisibility(ImageView.VISIBLE);
+//                                         quantityScan.setVisibility(View.VISIBLE);
+//
+//                                         totalScanQuantity.setText( pref.getString("TOTAL_SCAN", ""));
+//                                         ScanQuantity.setText(pref.getString("SCANNED",""));
+//                                         totScan=totalScanQuantity.getText().toString();
+//                                         scannedQty=ScanQuantity.getText().toString();
+//                                         if(totScan.equals(scanned_qty))
+//                                         {
+//                                             dialogueMethod();
+//                                         }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -958,6 +1228,7 @@ else
                      scannedQty=ScanQuantity.getText().toString();
                     if(totScan.equals(scanned_qty))
                     {
+                        quantityScan.setVisibility(View.GONE);
                         dialogueMethod();
                     }
                 }
@@ -1003,16 +1274,30 @@ else
             }
             else
             {
-                if(!SecondPartnoImage)
+
+                if(prtno.equals(secondndpartnoString))
                 {
-                    second_partno_cross.setVisibility(ImageView.VISIBLE);
-                    second_partno_check.setVisibility(ImageView.GONE);
+                    second_partno_check.setVisibility(View.VISIBLE);
+                    second_partno_cross.setVisibility(View.GONE);
+
                 }
                 else
                 {
-                    second_partno_cross.setVisibility(ImageView.GONE);
-                    second_partno_check.setVisibility(ImageView.VISIBLE);
+                    second_partno_cross.setVisibility(View.VISIBLE);
+                    second_partno_check.setVisibility(View.GONE);
+
+
                 }
+//                if(!SecondPartnoImage)
+//                {
+//                    second_partno_cross.setVisibility(ImageView.VISIBLE);
+//                    second_partno_check.setVisibility(ImageView.GONE);
+//                }
+//                else
+//                {
+//                    second_partno_cross.setVisibility(ImageView.GONE);
+//                    second_partno_check.setVisibility(ImageView.VISIBLE);
+//                }
             }
 
         }
@@ -1042,35 +1327,36 @@ else
                         String msgSuccessSubmit = jObj.getString("message");
 
                         Toast.makeText(getApplicationContext(), msgSuccessSubmit, Toast.LENGTH_SHORT).show();
-                        partno_check.setVisibility(ImageView.GONE);
-//                        qty_check.setVisibility(ImageView.GONE);
-                        boxno_check.setVisibility(ImageView.GONE);
-                        partno_check_cross.setVisibility(ImageView.GONE);
-                        pono_check_cross.setVisibility(ImageView.GONE);
-                        pono_chk.setVisibility(ImageView.GONE);
-                        partNo.setText("");
-                        qty.setText("");
-                        boxno.setText("");
-                        pono.setText("");
+
+
+                        quantityScan.setVisibility(View.GONE);
+                        partno_check.setVisibility(View.INVISIBLE);
+                        pono_chk.setVisibility(View.INVISIBLE);
+                        second_partno_check.setVisibility(View.INVISIBLE);
+
                         editor.remove("Quantity");
                         editor.remove("Part_No");
                         editor.remove("Box_No");
                         editor.remove("Po_No");
-                        editor.remove("partnocheck");
-                        editor.remove("boxnochk");
-                        editor.remove("quantitychk");
-                        editor.remove("ponochk");
-                        quantityScan.setVisibility(View.GONE);
+                        editor.remove("Second_Quantity");
+                        editor.remove("Second_Part_No");
+                        editor.commit();
                         editor.apply();
+                        partNo.setText("");
+                        qty.setText("");
+                        boxno.setText("");
+                        pono.setText("");
+                        partnoSecond.setText("");
+                        qtySecond.setText("");
+
                     }
                     else {
                         if (jObj.getString("status").equals("Failed"))
                         {
-                            int quantityLimit = Integer.parseInt(totScan) - Integer.parseInt(scannedQty);
 
                             String msgFailedSubmit = jObj.getString("message");
 
-                            Toast.makeText(getApplicationContext(), msgFailedSubmit +"\nRemaining Quantity :- "+ quantityLimit, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), msgFailedSubmit, Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -1084,13 +1370,13 @@ else
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                Toast.makeText(getApplicationContext(),"Something went wrong",Toast.LENGTH_SHORT).show();
-                partno_check.setVisibility(ImageView.GONE);
-                partno_check_cross.setVisibility(ImageView.GONE);
-                pono_check_cross.setVisibility(ImageView.GONE);
-                pono_chk.setVisibility(ImageView.GONE);
-                boxno_check.setVisibility(ImageView.GONE);
-                qty_check.setVisibility(ImageView.GONE);
+                Toast.makeText(getApplicationContext(),"Please fill all details",Toast.LENGTH_SHORT).show();
+//                partno_check.setVisibility(ImageView.GONE);
+//                partno_check_cross.setVisibility(ImageView.GONE);
+//                pono_check_cross.setVisibility(ImageView.GONE);
+//                pono_chk.setVisibility(ImageView.GONE);
+//                boxno_check.setVisibility(ImageView.GONE);
+//                qty_check.setVisibility(ImageView.GONE);
             }
 
         });

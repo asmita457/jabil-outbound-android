@@ -10,4 +10,6 @@
     <color name="trans">#00000000 </color>
     <color name="black">#10100f</color>
     <color name="hintcolor">#80455A64</color>
+    <color name="disabled_background_color">#10181818</color>
+    <color name="disabled_text_color">#aaa</color>
 </resources>

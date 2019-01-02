@@ -44,8 +44,8 @@ public class ScanAllBarcode extends AppCompatActivity implements  ZXingScannerVi
         scannerViewView.startCamera();
         scannerViewView.setSoundEffectsEnabled(true);
         scannerViewView.setAutoFocus(true);
-        scannerViewView.setMinimumHeight(30);
-        scannerViewView.setMinimumWidth(30);
+        scannerViewView.setMinimumHeight(50);
+        scannerViewView.setMinimumWidth(50);
         pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
         editor = pref.edit();
         Intent intentBarcode=getIntent();

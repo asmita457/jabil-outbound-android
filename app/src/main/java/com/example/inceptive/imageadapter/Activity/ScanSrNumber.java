@@ -96,9 +96,12 @@ public class ScanSrNumber extends AppCompatActivity {
                 dialog.show();
             }
         });
+        requestCameraPermission(MEDIA_TYPE_IMAGE);
+
     }
 
     private void ScanSrNumberBarcode() {
+
         scanSrNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,6 +111,7 @@ public class ScanSrNumber extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"Please select url",Toast.LENGTH_SHORT).show();
                 }
                 else {
+
                     scanBarcode(v);
                 }
             }
@@ -148,7 +152,7 @@ public class ScanSrNumber extends AppCompatActivity {
 
     public void scanBarcode(View v)
     {
-        requestCameraPermission(MEDIA_TYPE_IMAGE);
+//        requestCameraPermission(MEDIA_TYPE_IMAGE);
         Intent intent=new Intent(ScanSrNumber.this,ScanActivity.class);
 
          startActivityForResult(intent,0);
